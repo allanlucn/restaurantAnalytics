@@ -1,0 +1,24 @@
+# --- Ambiente Virtual ---
+# Ignora o ambiente virtual criado pelo uv, venv, etc.
+.venv/
+venv/
+env/
+
+# --- Segredos ---
+# NUNCA comite arquivos .env que contêm senhas de banco!
+.env
+*.env
+
+# --- Cache do Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Configurações de IDE ---
+.vscode/
+.idea/
+
+# --- Arquivos de OS ---
+.DS_Store
+Thumbs.db
