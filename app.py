@@ -152,6 +152,44 @@ def sales_timeline():
         ])
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+@app.route('/api/top-products')
+def top_products():
+    """Top 10 produtos mais vendidos"""
+    try:
+        limit = request.args.get('limit', 10)
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        cur.execute("""
+            SELECT 
+                p.name,
+                COUNT(*) as quantidade_vendida,
+                SUM(ps.total_price)::numeric(10,2) as faturamento
+            FROM product_sales ps
+            JOIN products p ON p.id = ps.product_id
+            JOIN sales s ON s.id = ps.sale_id
+            WHERE s.sale_status_desc = 'COMPLETED'
+            GROUP BY p.name
+            ORDER BY faturamento DESC
+            LIMIT %s
+        """, (limit,))
+        
+        results = cur.fetchall()
+        cur.close()
+        conn.close()
+        
+        return jsonify([
+            {
+                'produto': row[0],
+                'quantidade': row[1],
+                'faturamento': format_decimal(row[2])
+            }
+            for row in results
+        ])
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     
 if __name__ == '__main__':
     print("\n" + "="*50)
